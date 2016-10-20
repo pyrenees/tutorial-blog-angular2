@@ -9,3 +9,5 @@ eggs
 parts
 src/
 data/Data*
+.installed.cfg
+.mr.developer.cfg
