@@ -2,19 +2,37 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { RouterModule } from '@angular/router';
+
+import { ConfigurationService } from '@plone/api';
+import { PloneapiService } from '@plone/api';
 
 import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
+import {
+  routing,
+  appRoutingProviders
+} from './app.routes.ts';
+import { BlogpostComponent } from './blogpost/blogpost.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    BlogpostComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    RouterModule,
+    routing,
   ],
-  providers: [],
+  providers: [
+    appRoutingProviders,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

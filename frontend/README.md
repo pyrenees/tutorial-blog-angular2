@@ -1,31 +1,44 @@
-# Frontend
+Blog Angular 2 client
+======================
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.17.
+Installation
+------------
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Install the Angular CLI globally::
 
-## Code scaffolding
+    $ npm install -g angular-cli@latest
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class`.
+Initialize the setup::
 
-## Build
+    $ ng init
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run the client
+--------------
 
-## Running unit tests
+::
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+    $ ng serve
 
-## Running end-to-end tests
+You can access it by navigating to http://localhost:4200/
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-Before running the tests make sure you are serving the app via `ng serve`.
 
-## Deploying to Github Pages
+Material Design Lite
+--------------------
 
-Run `ng github-pages:deploy` to deploy to Github Pages.
+Add mdl as a dependency::
 
-## Further help
+  $ npm install material-design-lite --save
 
-To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+angular-cli.json::
+
+  "styles": [
+    "styles.css",
+    "../node_modules/material-design-lite/material.css"
+  ],
+  "scripts": [
+    "../node_modules/material-design-lite/material.js"
+  ],
+
+index.html::
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

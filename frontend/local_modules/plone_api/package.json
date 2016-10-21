@@ -25,6 +25,7 @@
     "Ramon Navarro Bosch <ramon.nb@gmail.com>"
   ],
   "dependencies": {
+    "jwt-decode": "^2.1.0"
   },
   "devDependencies": {
     "@types/body-parser": "0.0.33",
