@@ -100,10 +100,10 @@ export class ConfigurationService {
     let timeout = decoded.exp * 1000 - now - 3600000;
     console.log('Refresh again in ' + timeout);
     this.save_auth();
-    this.timerRefreshToken = Observable.timer(timeout - 3600000);
-    this.timerRefreshToken.subscribe(
-      x => this.refreshToken(refresh)
-    );
+    // this.timerRefreshToken = Observable.timer(timeout - 3600000);
+    // this.timerRefreshToken.subscribe(
+    //   x => this.refreshToken(refresh)
+    // );
   }
 
   refreshToken(endpoint) {
