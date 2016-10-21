@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { Http, Headers, Response } from '@angular/http';
 import { ConfigurationService } from './auth.service';
+import { Observable } from 'rxjs/observable';
 
 const REGISTRY_ENDPOINT = '@registry';
 const TYPES_ENDPOINT = '@types';
 const SHARING_ENTRYPOINT = '@sharing';
+const LOGIN_URL = '@login';
+
 
 @Injectable()
 export class PloneapiService {
@@ -49,7 +52,7 @@ export class PloneapiService {
     });
   }
 
-  getObject(curr_path: string) {
+  getObject(curr_path: string): Observable<Response> {
     let url = '';
     if (curr_path.startsWith('http')) {
       url = curr_path;
@@ -116,5 +119,16 @@ export class PloneapiService {
     let url = this.base_url() + '/' + TYPES_ENDPOINT + '/' + type;
     return this.get(url);
   }
+
+  login(user, pass): Observable<Response> {
+    let url = this.config.getURL(this.config.config) +  '/' + LOGIN_URL;
+    let model = {
+      'username': user,
+      'password': pass
+    };
+    let data = JSON.stringify(model);
+    return this.post(url, data);
+  }
+
 
 }

@@ -81,17 +81,18 @@ export class ConfigurationService {
     );
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
+    let refresh = this.auth.oauth + OAUTH_REFRESH_URL;
     this.http.post(
       endpoint,
       body,
       {headers: headers}
     ).subscribe(
-      res => this.saveUserToken(res),
+      res => this.saveUserToken(res, refresh),
       err => console.log(err)
     );
   }
 
-  saveUserToken(res) {
+  saveUserToken(res, refresh) {
     this.auth.jwt = res;
     let decoded = jwtDecode(res._body);
     this.auth.token = decoded.token;
@@ -101,12 +102,12 @@ export class ConfigurationService {
     this.save_auth();
     this.timerRefreshToken = Observable.timer(timeout - 3600000);
     this.timerRefreshToken.subscribe(
-      x => this.refreshToken()
+      x => this.refreshToken(refresh)
     );
   }
 
-  refreshToken() {
-    let endpoint = this.auth.oauth + OAUTH_REFRESH_URL;
+  refreshToken(endpoint) {
+
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     let body = JSON.stringify(
@@ -121,8 +122,9 @@ export class ConfigurationService {
       body,
       {headers: headers}
     ).subscribe(
-      res => this.saveUserToken(res),
+      res => this.saveUserToken(res, endpoint),
       err => console.log(err)
     );
   }
+
 }

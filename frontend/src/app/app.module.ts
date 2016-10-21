@@ -32,6 +32,8 @@ import { LoginComponent } from './login/login.component';
   ],
   providers: [
     appRoutingProviders,
+    ConfigurationService,
+    PloneapiService
   ],
   bootstrap: [AppComponent]
 })

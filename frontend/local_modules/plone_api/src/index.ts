@@ -1,2 +1,2 @@
-import { ConfigurationService } from './auth.service';
-import { PloneapiService } from './api.service';
+export { ConfigurationService } from './lib/auth.service';
+export { PloneapiService } from './lib/api.service';
