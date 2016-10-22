@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PloneapiService } from '@plone/api';
-import { ConfigurationService } from '@plone/api';
+import { AuthService } from '@plone/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,19 +13,17 @@ export class LoginComponent implements OnInit {
   password: string;
 
   constructor(
-    public config: ConfigurationService,
-    public api: PloneapiService) { }
+    public auth: AuthService,
+    private router: Router) { }
 
   ngOnInit() {
+    this.auth.loggedin.subscribe(
+      data => this.router.navigate(['/'])
+    );
   }
 
   login() {
-    let refresh = this.config.getURL(this.config.config) + '/@refresh';
-    this.api.login(this.username, this.password)
-    .subscribe(
-      res => this.config.saveUserToken(res, refresh),
-      err => console.log(err)
-    );
+    this.auth.login(this.username, this.password);
   }
 
 }

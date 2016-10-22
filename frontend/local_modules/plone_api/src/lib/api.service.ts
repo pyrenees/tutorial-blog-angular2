@@ -1,34 +1,37 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
-import { ConfigurationService } from './auth.service';
+import { ConfigurationService } from './config.service';
+import { AuthService } from './auth.service';
 import { Observable } from 'rxjs/observable';
 
 const REGISTRY_ENDPOINT = '@registry';
 const TYPES_ENDPOINT = '@types';
 const SHARING_ENTRYPOINT = '@sharing';
-const LOGIN_URL = '@login';
 
 
 @Injectable()
 export class PloneapiService {
 
-  constructor(public http: Http, public config: ConfigurationService) { }
+  constructor(public http: Http, public config: ConfigurationService, public auth: AuthService) { }
 
   base_url() {
+    // Get the base url of the plone site we have configuration
     return this.config.getURL(this.config.config);
   }
 
   base_db_url() {
+    // Get the base url of the zodb we have configuration
     return this.config.getURL(this.config.config, true);
   }
 
   createAuthHeaders(headers: Headers) {
+    // Add the auth headers
     let auth_header = '';
-    if (this.config.auth.type === 'Basic') {
-      auth_header = 'Basic ' + this.config.auth.token;
+    if (this.auth.auth.type === 'Basic') {
+      auth_header = 'Basic ' + this.auth.auth.token;
     }
-    if (this.config.auth.type === 'Bearer') {
-      auth_header = 'Bearer ' + this.config.auth.jwt;
+    if (this.auth.auth.type === 'Bearer') {
+      auth_header = 'Bearer ' + this.auth.auth.jwt;
     }
     if (auth_header) {
       headers.append('Authorization', auth_header);
@@ -37,6 +40,7 @@ export class PloneapiService {
   }
 
   get(url) {
+    // do a get request to plone
     let headers = new Headers();
     this.createAuthHeaders(headers);
     return this.http.get(url, {
@@ -45,6 +49,7 @@ export class PloneapiService {
   }
 
   post(url, data) {
+    // do a post request to plone
     let headers = new Headers();
     this.createAuthHeaders(headers);
     return this.http.post(url, data, {
@@ -53,6 +58,7 @@ export class PloneapiService {
   }
 
   getObject(curr_path: string): Observable<Response> {
+    // get the object with a path that can be relative to site or full
     let url = '';
     if (curr_path.startsWith('http')) {
       url = curr_path;
@@ -63,11 +69,13 @@ export class PloneapiService {
   }
 
   getSites() {
+    // get all available sites
     let url = this.base_db_url();
     return this.get(url);
   }
 
   createSite(name: string, id: string) {
+    // create a site
     let url = this.base_db_url();
     let data = JSON.stringify({
       '@type': 'Plone Site',
@@ -114,16 +122,5 @@ export class PloneapiService {
     let url = this.base_url() + '/' + TYPES_ENDPOINT + '/' + type;
     return this.get(url);
   }
-
-  login(user, pass): Observable<Response> {
-    let url = this.config.getURL(this.config.config) +  '/' + LOGIN_URL;
-    let model = {
-      'username': user,
-      'password': pass
-    };
-    let data = JSON.stringify(model);
-    return this.post(url, data);
-  }
-
 
 }

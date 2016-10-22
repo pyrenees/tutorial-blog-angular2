@@ -1,61 +1,52 @@
 import { Injectable } from '@angular/core';
-import { Configuration } from './configuration';
+import { ConfigurationService } from './config.service';
+import { PloneapiService } from './api.service';
 import { Authentication } from './configuration';
-import { Http, Headers } from '@angular/http';
-let jwtDecode = require('jwt-decode');
+import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { Output, EventEmitter } from '@angular/core';
+
+let jwtDecode = require('jwt-decode');
 
 const OAUTH_REFRESH_URL = '/refresh';
 const OAUTH_GETTOKEN_URL = '/get_auth_token';
 const PSERVER_AUTHCODE_URL = '/@oauthgetcode';
+const PLONE_LOGIN_URL = '@login';
+const PLONE_REFRESH_URL = '@login';
 
 
 @Injectable()
-export class ConfigurationService {
+export class AuthService {
 
-  config: Configuration;
-  auth: Authentication;
   timerRefreshToken: any;
+  auth: Authentication;
+  @Output() loggedin = new EventEmitter();
 
 
-  constructor(public http: Http) {
-    let local = localStorage.getItem('plone_manager_config');
-    if (local) {
-      this.config = JSON.parse(local);
-    } else {
-      this.config = new Configuration(false, '127.0.0.1', 'zodb1', 'plone', '8080', 'plone.server');
-    }
-    let local_auth = localStorage.getItem('plone_manager_auth');
-    if (local_auth) {
-      this.auth = JSON.parse(local_auth);
-    } else {
-      this.auth = new Authentication();
-    }
+  constructor(
+    public http: Http,
+    public config: ConfigurationService,
+    public api: PloneapiService) {
+      let local_auth = localStorage.getItem('plone_auth');
+      if (local_auth) {
+        this.auth = JSON.parse(local_auth);
+      } else {
+        this.auth = new Authentication();
+      }
+      this.loggedin.subscribe(
+        data => this.saveUserToken(data.data, data.refresh)
+      );
   }
 
-  getURL(config: Configuration, without_site?: boolean) {
-    let url = '';
-    if (config.https) {
-      url = 'https://';
-    } else {
-      url = 'http://';
-    }
-    url = url + config.ip + ':' + config.port + '/' + config.zodb;
-    if (!without_site) {
-      url += '/' + config.site;
-    }
-    return url;
-  }
-
-  save_config() {
-    localStorage.setItem('plone_manager_config', JSON.stringify(this.config));
-  }
   save_auth() {
-    localStorage.setItem('plone_manager_auth', JSON.stringify(this.auth));
+    localStorage.setItem('plone_auth', JSON.stringify(this.auth));
   }
+
+  // Oauth functions for plone.oauth
 
   call_oauth(password) {
-    let endpoint = this.getURL(this.config) + PSERVER_AUTHCODE_URL + '?client_id=' + this.auth.client_id + '&scope=' + this.auth.scope;
+    let endpoint = this.config.getURL(this.config.config) + PSERVER_AUTHCODE_URL +
+      '?client_id=' + this.auth.client_id + '&scope=' + this.auth.scope;
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     this.http.get(
@@ -92,6 +83,26 @@ export class ConfigurationService {
     );
   }
 
+  // Plone login endpoint
+  login(user, pass) {
+    let refresh = this.config.getURL(this.config.config) + '/' + PLONE_REFRESH_URL;
+    let url = this.config.getURL(this.config.config) +  '/' + PLONE_LOGIN_URL;
+    let model = {
+      'username': user,
+      'password': pass
+    };
+    let data = JSON.stringify(model);
+    this.api.post(url, data)
+    .subscribe(
+      res => this.loggedin.emit({
+        'data': res,
+        'refresh': refresh}),
+      err => console.log(err)
+    );
+  }
+
+  // User token management
+
   saveUserToken(res, refresh) {
     this.auth.jwt = res;
     let decoded = jwtDecode(res._body);
@@ -100,14 +111,13 @@ export class ConfigurationService {
     let timeout = decoded.exp * 1000 - now - 3600000;
     console.log('Refresh again in ' + timeout);
     this.save_auth();
-    // this.timerRefreshToken = Observable.timer(timeout - 3600000);
-    // this.timerRefreshToken.subscribe(
-    //   x => this.refreshToken(refresh)
-    // );
+    this.timerRefreshToken = Observable.timer(timeout - 3600000);
+    this.timerRefreshToken.subscribe(
+      x => this.refreshToken(refresh)
+    );
   }
 
   refreshToken(endpoint) {
-
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     let body = JSON.stringify(
