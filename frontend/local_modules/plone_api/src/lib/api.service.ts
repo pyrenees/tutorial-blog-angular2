@@ -84,11 +84,6 @@ export class PloneapiService {
     } else {
       url = this.base_url() + current_path;
     }
-    // let data = JSON.stringify({
-    //   '@type': type,
-    //   'title': name,
-    //   'id': id
-    // });
     model['@type'] = type;
     let data = JSON.stringify(model);
     return this.post(url, data);

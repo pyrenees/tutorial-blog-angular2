@@ -1,48 +1,25 @@
-<div class="mdl-layout mdl-js-layout">
+<md-sidenav-layout  fullscreen>
+  <md-sidenav #start>
+    <img src="assets/plone-logo.svg" alt="Plone" />
 
-  <!-- HEADER -->
-  <header class="mdl-layout__header mdl-layout__header--scroll">
-    <div class="mdl-layout__header-row">
-      <!-- Title -->
-      <span class="mdl-layout-title">
-        <img src="assets/plone-logo.svg" alt="Plone" />
-      </span>
-      <!-- Add spacer, to align navigation to the right -->
-      <div class="mdl-layout-spacer"></div>
-      <!-- Navigation -->
-      <nav class="mdl-navigation">
-        <a [routerLink]="['/']" class="mdl-navigation__link" href="/">Home</a>
-        <a [routerLink]="['/login']" class="mdl-navigation__link" href="login">Login</a>
-      </nav>
-      <!-- Search -->
-      <div class="android-search-box mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right mdl-textfield--full-width">
-        <label class="mdl-button mdl-js-button mdl-button--icon" for="search-field">
-          <i class="material-icons">search</i>
-        </label>
-        <div class="mdl-textfield__expandable-holder">
-          <input class="mdl-textfield__input" type="text" id="search-field">
-        </div>
+    <md-nav-list>
+      <a md-list-item [routerLink]="['/']">Home</a>
+      <a md-list-item [routerLink]="['login']">Login</a>
+    </md-nav-list>
+    <button md-button (click)="start.close()">CLOSE</button>
+  </md-sidenav>
+  <div>
+    <md-toolbar color="primary">
+      <button md-icon-button (click)="start.open()">
+        <md-icon class="md-24">menu</md-icon>
+      </button>
+      <div>Plone Blog
       </div>
+    </md-toolbar>
+
+    <div #root="$implicit" dir="ltr" class="demo-content">
+      <router-outlet></router-outlet>
     </div>
-  </header>
-
-  <!-- SIDEBAR -->
-  <div class="plone-drawer mdl-layout__drawer">
-    <span class="mdl-layout-title">
-      <img src="assets/plone-logo.svg" alt="Plone" />
-    </span>
-    <nav class="mdl-navigation">
-      <a [routerLink]="['/']" class="mdl-navigation__link" href="/">Home</a>
-      <a [routerLink]="['/login']" class="mdl-navigation__link" href="login">Login</a>
-    </nav>
-  </div>
-
-  <!-- MAIN -->
-  <main class="mdl-layout__content">
-
-    <router-outlet></router-outlet>
-
-    <!-- FOOTER -->
     <footer class="mdl-mega-footer">
       <div class="mdl-mega-footer--middle-section">
         <div class="mdl-mega-footer--drop-down-section">
@@ -91,7 +68,5 @@
         </div>
       </div>
     </footer>
-
-  </main>
-
-</div>
+  </div>
+</md-sidenav-layout>

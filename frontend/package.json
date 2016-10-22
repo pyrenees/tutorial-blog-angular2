@@ -24,8 +24,9 @@
     "rxjs": "5.0.0-beta.12",
     "ts-helpers": "^1.1.1",
     "zone.js": "^0.6.23",
-    "material-design-lite": "^1.2.1",
-    "@plone/api": "file:./local_modules/plone_api"
+    "@angular/material": "^v2.0.0-alpha.9-3",
+    "@plone/api": "file:./local_modules/plone_api",
+    "angular2-schema-form": "file:./local_modules/angular2-schema-form"
   },
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
