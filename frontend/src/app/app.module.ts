@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { ConfigurationService } from '@plone/api';
+import { AuthService } from '@plone/api';
 import { PloneapiService } from '@plone/api';
 import { MaterialModule } from '@angular/material';
 
@@ -46,6 +47,7 @@ import { CreationComponent } from './creation/creation.component';
   ],
   providers: [
     appRoutingProviders,
+    AuthService,
     ConfigurationService,
     MdIconRegistry,
     PloneapiService,

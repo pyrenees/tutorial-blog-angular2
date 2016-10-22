@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ConfigurationService } from './config.service';
-import { PloneapiService } from './api.service';
 import { Authentication } from './configuration';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
@@ -12,7 +11,7 @@ const OAUTH_REFRESH_URL = '/refresh';
 const OAUTH_GETTOKEN_URL = '/get_auth_token';
 const PSERVER_AUTHCODE_URL = '/@oauthgetcode';
 const PLONE_LOGIN_URL = '@login';
-const PLONE_REFRESH_URL = '@login';
+const PLONE_REFRESH_URL = '@refresh';
 
 
 @Injectable()
@@ -25,8 +24,7 @@ export class AuthService {
 
   constructor(
     public http: Http,
-    public config: ConfigurationService,
-    public api: PloneapiService) {
+    public config: ConfigurationService) {
       let local_auth = localStorage.getItem('plone_auth');
       if (local_auth) {
         this.auth = JSON.parse(local_auth);
@@ -85,6 +83,8 @@ export class AuthService {
 
   // Plone login endpoint
   login(user, pass) {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
     let refresh = this.config.getURL(this.config.config) + '/' + PLONE_REFRESH_URL;
     let url = this.config.getURL(this.config.config) +  '/' + PLONE_LOGIN_URL;
     let model = {
@@ -92,7 +92,11 @@ export class AuthService {
       'password': pass
     };
     let data = JSON.stringify(model);
-    this.api.post(url, data)
+    this.http.post(
+      url,
+      data,
+      {headers: headers}
+    )
     .subscribe(
       res => this.loggedin.emit({
         'data': res,
@@ -111,7 +115,7 @@ export class AuthService {
     let timeout = decoded.exp * 1000 - now - 3600000;
     console.log('Refresh again in ' + timeout);
     this.save_auth();
-    this.timerRefreshToken = Observable.timer(timeout - 3600000);
+    this.timerRefreshToken = Observable.timer(timeout);
     this.timerRefreshToken.subscribe(
       x => this.refreshToken(refresh)
     );
