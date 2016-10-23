@@ -57,6 +57,14 @@ export class PloneapiService {
     });
   }
 
+  head(url) {
+    let headers = new Headers();
+    this.createAuthHeaders(headers);
+    return this.http.head(url, {
+      headers: headers
+    });
+  }
+
   getObject(curr_path: string): Observable<Response> {
     // get the object with a path that can be relative to site or full
     let url = '';

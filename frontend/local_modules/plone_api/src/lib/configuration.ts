@@ -3,10 +3,10 @@ export class Configuration {
   constructor(
     public https: boolean,
     public ip: string,
-    public zodb: string,
     public site: string,
     public port: string,
-    public type: string
+    public type: string,
+    public zodb?: string
   ) {  }
 }
 

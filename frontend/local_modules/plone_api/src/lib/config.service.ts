@@ -1,14 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { Configuration } from './configuration';
-import { Authentication } from './configuration';
-import { Http, Headers } from '@angular/http';
-let jwtDecode = require('jwt-decode');
-import { Observable } from 'rxjs/Rx';
-
-const OAUTH_REFRESH_URL = '/refresh';
-const OAUTH_GETTOKEN_URL = '/get_auth_token';
-const PSERVER_AUTHCODE_URL = '/@oauthgetcode';
-
+import { Http } from '@angular/http';
 
 @Injectable()
 export class ConfigurationService {
@@ -17,12 +9,18 @@ export class ConfigurationService {
   timerRefreshToken: any;
 
 
-  constructor(public http: Http) {
+  constructor(
+      public http: Http,
+      @Inject('api.config') private apiConfig: Configuration) {
     let local = localStorage.getItem('plone_config');
     if (local) {
       this.config = JSON.parse(local);
     } else {
-      this.config = new Configuration(false, '127.0.0.1', 'zodb1', 'plone', '8080', 'plone.server');
+      if (apiConfig) {
+        this.config = apiConfig;
+      } else {
+        this.config = new Configuration(false, '127.0.0.1', 'plone', '8080', 'plone.server', 'zodb1');
+      }
     }
   }
 
