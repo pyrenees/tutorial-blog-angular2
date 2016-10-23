@@ -73,8 +73,8 @@ export class $WebSocket {
     }
 
     connect(token, force = false) {
-        let endpoint = this.configuration.getURL(this.configuration.config);
-        endpoint = endpoint + '/' + WEBSOCKET_URL + '?ws_token=' + token;
+        let endpoint = this.configuration.getWSURL(this.configuration.config);
+        endpoint = endpoint + '/' + WEBSOCKET_URL + '?ws_token=' + token.token;
         let self = this;
         if (force || !this.socket || this.socket.readyState !== this.readyStateConstants.OPEN) {
             self.socket = new WebSocket(endpoint);

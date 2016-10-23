@@ -24,6 +24,20 @@ export class ConfigurationService {
     }
   }
 
+  getWSURL(config: Configuration, without_site?: boolean) {
+    let url = '';
+    if (config.https) {
+      url = 'wss://';
+    } else {
+      url = 'ws://';
+    }
+    url = url + config.ip + ':' + config.port + '/' + config.zodb;
+    if (!without_site) {
+      url += '/' + config.site;
+    }
+    return url;
+  }
+
   getURL(config: Configuration, without_site?: boolean) {
     let url = '';
     if (config.https) {
